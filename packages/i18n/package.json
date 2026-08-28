@@ -1,0 +1,12 @@
+{
+  "name": "@siab/i18n",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc --noEmit", "test": "node --test --experimental-strip-types src/*.test.ts" },
+  "dependencies": { "i18next": "^24.2.1" },
+  "devDependencies": { "typescript": "^5.7.3" }
+}

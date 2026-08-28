@@ -38,3 +38,6 @@ Thumbs.db
 
 # test
 coverage/
+
+# pnpm lockfile is committed; local store is not
+.pnpm-debug.log
