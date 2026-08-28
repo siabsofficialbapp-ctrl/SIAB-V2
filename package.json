@@ -5,17 +5,21 @@
   "description": "SIAB \u2014 an AI-native marketplace connecting buyers and sellers.",
   "packageManager": "pnpm@10.33.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "pnpm": ">=10"
   },
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
+    "build": "pnpm --filter @siab/api build",
+    "dev": "pnpm --filter @siab/api dev",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "db:reset": "supabase db reset",
     "db:push": "supabase db push",
-    "db:seed": "tsx supabase/seed/seed.ts"
+    "db:seed": "tsx supabase/seed/seed.ts",
+    "start": "node apps/api/dist/index.js",
+    "build:all": "turbo run build",
+    "dev:app": "pnpm --filter @siab/app dev"
   },
   "devDependencies": {
     "turbo": "^2.5.5",
@@ -24,5 +28,10 @@
     "@types/node": "^22.10.5",
     "prettier": "^3.4.2",
     "@supabase/supabase-js": "^2.48.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
