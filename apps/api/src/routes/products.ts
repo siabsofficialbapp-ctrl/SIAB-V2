@@ -422,6 +422,38 @@ export async function productRoutes(app: FastifyInstance): Promise<void> {
     },
   );
 
+  /**
+   * Cleans up a Storage object whose registration failed.
+   *
+   * The client calls this when step 3 of the upload errors, so a file that
+   * nothing points at does not sit consuming the storage quota.
+   */
+  app.delete<{ Params: { id: string }; Body: { storagePath?: string } }>(
+    '/seller/products/:id/images/orphan',
+    async (req, reply) => {
+      const seller = await requireSeller(req, reply);
+      const storagePath = req.body?.storagePath;
+      if (!storagePath) throw badRequest('storagePath is required');
+
+      if (!storagePath.startsWith(`${seller.sellerId}/${req.params.id}/`)) {
+        throw badRequest('That storage path does not belong to this product');
+      }
+
+      const db = userClient(seller.accessToken);
+
+      // Refuse if a row DOES point at it — that would delete a live image.
+      const { data: registered } = await db
+        .from('product_images')
+        .select('id')
+        .eq('storage_path', storagePath)
+        .maybeSingle();
+      if (registered) throw badRequest('That image is registered; delete it properly instead.');
+
+      await db.storage.from(PRODUCT_IMAGES_BUCKET).remove([storagePath]);
+      return { removed: true };
+    },
+  );
+
   app.delete<{ Params: { id: string; imageId: string } }>(
     '/seller/products/:id/images/:imageId',
     async (req, reply) => {

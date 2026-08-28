@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "SIAB",
+    "slug": "siab",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "siab",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+
+    "icon": "./assets/logo.png",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B1220"
+    },
+
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.siab.marketplace",
+      "infoPlist": {
+        "NSCameraUsageDescription": "SIAB uses the camera so you can photograph products you are listing.",
+        "NSPhotoLibraryUsageDescription": "SIAB needs access to your photos so you can add pictures to listings and messages.",
+        "NSLocationWhenInUseUsageDescription": "SIAB uses your location only when you choose to share it in a message or set your stall location. It never tracks you in the background."
+      }
+    },
+
+    "android": {
+      "package": "app.siab.marketplace",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#0B1220"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/logo.png"
+    },
+
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      ["expo-image-picker", {
+        "photosPermission": "SIAB needs access to your photos so you can add pictures to listings and messages.",
+        "cameraPermission": "SIAB uses the camera so you can photograph products you are listing."
+      }],
+      ["expo-location", {
+        "locationAlwaysAndWhenInUsePermission": "SIAB uses your location only when you choose to share it. It never tracks you in the background."
+      }]
+    ],
+
+    "experiments": { "typedRoutes": true }
+  }
+}

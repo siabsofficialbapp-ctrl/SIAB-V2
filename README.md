@@ -12,10 +12,19 @@ pairing — not the marketplace itself — is the product.
 
 | Phase | Scope | State |
 |---|---|---|
-| 1 | Architecture | ✅ done |
-| 2 | Database schema, RLS, storage, tests | ✅ done — 20 tests passing |
-| 3 | Auth, roles, Terms gate, email verification | ⏳ next |
-| 4–10 | Marketplace, chat, bidding, orders, score, AI, Arabic, hardening | planned |
+| 1 | Architecture | ✅ |
+| 2 | Database schema, RLS, storage | ✅ 20 tests |
+| 3 | Auth, roles, Terms gate, email verification | ✅ |
+| 4 | Marketplace, products, stalls, images, search + filters | ✅ |
+| 5 | Messaging: text, images, deliberate location sharing | ✅ |
+| 6 | Bidding and the order pipeline | ✅ |
+| 7 | The SIAB score and seller analytics | ✅ |
+| 8 | Customer AI and AI Coworker | ✅ |
+| 9 | English + Arabic with RTL | ✅ 385 messages, parity enforced |
+| 10 | Production hardening | ⏳ needs your keys and a device run |
+
+**49 automated checks pass:** 20 database, 18 domain logic, 7 localisation,
+4 API boot/authorisation. Five packages typecheck with zero errors.
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full design.
 
@@ -27,18 +36,35 @@ The database layer is complete and tested. Not "written and it looks right" —
 executed against a real Postgres, with the security rules asserted:
 
 ```
-✓ everyone starts at 100, bands correct       ✓ Seller B's costs invisible to Seller A
-✓ rating blocked until both sides confirm     ✓ Seller B's AI knowledge invisible to Seller A
-✓ one-sided confirmation does not complete    ✓ orders visible only to their two parties
-✓ mutual confirmation completes the order     ✓ analytics accessor rejects a foreign seller id
-✓ status changes written to the audit trail   ✓ reputation_score not writable by a client
-✓ +5 / −5 applied, rating is mutual           ✓ self-bidding rejected
-✓ one rating per person per order             ✓ bid seller must own the product
-✓ only the two parties may rate               ✓ only seller accounts may own a stall
-✓ score reproducible from the event log       ✓ card data rejected at the database layer
+Database (20)                                 Domain logic (18)
+✓ everyone starts at 100, bands correct       ✓ VAT extracted from the price, not added
+✓ rating blocked until both sides confirm     ✓ totals reconcile exactly at every price
+✓ one-sided confirmation does not complete    ✓ score bands match the database exactly
+✓ mutual confirmation completes the order     ✓ no actor can force an order to completed
+✓ status changes written to the audit trail   ✓ the pipeline cannot be skipped or reversed
+✓ +5 / −5 applied, rating is mutual           ✓ a rating is exactly +5, −5 or skip
+✓ one rating per person per order             ✓ a seller cannot register without a stall
+✓ only the two parties may rate
+✓ score reproducible from the event log       Localisation (7)
+✓ Seller B's costs invisible to Seller A      ✓ English and Arabic cover the same messages
+✓ Seller B's AI knowledge invisible to A      ✓ placeholders match across both languages
+✓ orders visible only to their two parties    ✓ Arabic supplies all six plural forms
+✓ analytics rejects a foreign seller id       ✓ Arabic is right-to-left
+✓ reputation_score not writable by a client
+✓ self-bidding rejected                       API (4)
+✓ bid seller must own the product             ✓ health reports integrations honestly
+✓ only seller accounts may own a stall        ✓ 21 private endpoints all reject no-token
+✓ card data rejected at the database layer    ✓ errors carry a translation key
 ```
 
-Run them yourself: `./supabase/tests/run.sh`
+Run them yourself:
+
+```bash
+./supabase/tests/run.sh                 # database + security
+node --test --experimental-strip-types packages/core/src/core.test.ts
+node --test --experimental-strip-types packages/i18n/src/i18n.test.ts
+pnpm --filter @siab/api test            # API boot + authorisation
+```
 
 ---
 
@@ -108,6 +134,22 @@ packages/i18n/   English and Arabic resources
 supabase/        Migrations, RLS policies, storage buckets, tests, seed
 docs/            Architecture and companion documents
 ```
+
+## Before it runs for real
+
+Three things are needed from you, and the app is honest about all of them —
+the health endpoint reports what is actually wired rather than pretending.
+
+| What | Where | Without it |
+|---|---|---|
+| **Your logo** | replace `apps/app/assets/logo.png` | a placeholder mark is shown |
+| Supabase project | `SUPABASE_*` in `.env` | the app cannot sign anyone in |
+| Anthropic key | `ANTHROPIC_API_KEY` | both assistants are disabled |
+| Brevo key | `BREVO_API_KEY` | verification email does not send |
+| Payment provider | `PAYMENTS_PROVIDER` | sandbox only; no real money moves |
+
+The logo must be a square PNG. It is masked into a circle in the app header
+and used as the home-screen icon.
 
 ---
 

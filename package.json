@@ -2,9 +2,11 @@
   "name": "siab",
   "private": true,
   "version": "0.1.0",
-  "description": "SIAB — an AI-native marketplace connecting buyers and sellers.",
+  "description": "SIAB \u2014 an AI-native marketplace connecting buyers and sellers.",
   "packageManager": "pnpm@10.33.0",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -20,6 +22,7 @@
     "typescript": "^5.7.3",
     "tsx": "^4.19.2",
     "@types/node": "^22.10.5",
-    "prettier": "^3.4.2"
+    "prettier": "^3.4.2",
+    "@supabase/supabase-js": "^2.48.1"
   }
 }
