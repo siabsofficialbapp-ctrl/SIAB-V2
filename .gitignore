@@ -1,0 +1,40 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+.next/
+.expo/
+.turbo/
+*.tsbuildinfo
+web-build/
+
+# env & secrets — NEVER COMMIT
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service-account*.json
+
+# supabase local
+supabase/.branches/
+supabase/.temp/
+.supabase/
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# test
+coverage/
