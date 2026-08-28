@@ -19,7 +19,8 @@
     "db:seed": "tsx supabase/seed/seed.ts",
     "start": "node apps/api/dist/index.js",
     "build:all": "turbo run build",
-    "dev:app": "pnpm --filter @siab/app dev"
+    "dev:app": "pnpm --filter @siab/app dev",
+    "smoke": "tsx scripts/smoke.ts"
   },
   "devDependencies": {
     "turbo": "^2.5.5",
